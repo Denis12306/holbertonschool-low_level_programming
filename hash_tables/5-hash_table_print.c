@@ -9,7 +9,7 @@ void hash_table_print(const hash_table_t *ht)
 {
     unsigned long int i;
     hash_node_t *node;
-    int first = 1; // pour savoir si on doit mettre une virgule
+    int printed = 0; // indique si on a déjà imprimé un élément
 
     if (!ht)
         return;
@@ -21,10 +21,12 @@ void hash_table_print(const hash_table_t *ht)
         node = ht->array[i];
         while (node)
         {
-            if (!first)
-                printf(", ");
+            if (printed)
+                printf(", "); // virgule avant chaque élément sauf le premier
+
             printf("'%s': '%s'", node->key, node->value);
-            first = 0;
+            printed = 1;
+
             node = node->next;
         }
     }
