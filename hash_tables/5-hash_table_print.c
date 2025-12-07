@@ -1,9 +1,6 @@
 #include "hash_tables.h"
 #include <stdio.h>
 #include <string.h>
-
-int not_last_node(const hash_table_t *ht, hash_node_t *node);
-
 /**
  * hash_table_print - prints the contents of a hash table
  * @ht: hash table to print
