@@ -1,47 +1,51 @@
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/uio.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
+
 /**
- * read_textfile - A function that reads a text file and prints
- * to the POSIX STDOUT
- * @filename: The filename to open
- * @letters: The number of letters to read and print
- * Return: The number of letters read and printed, or 0 on failure
+ * read_textfile - reads a text file and prints it to STDOUT
+ * @filename: name of file to read
+ * @letters: number of letters to read and print
+ *
+ * Return: number of letters printed, or 0 on error
  */
 ssize_t read_textfile(const char *filename, size_t letters)
 {
-	int fdo, fdr, fdw;
-	char *temp;
+	int fd;
+	ssize_t r, w;
+	char *buffer;
 
-	if (filename == NULL)
+	if (!filename)
 		return (0);
 
-	temp = malloc(sizeof(char) * letters);
-	if (temp == NULL)
+	buffer = malloc(sizeof(char) * letters);
+	if (!buffer)
 		return (0);
 
-	fdo = open(filename, O_RDONLY);
-	if (fdo < 0)
+	fd = open(filename, O_RDONLY);
+	if (fd == -1)
 	{
-		free(temp);
+		free(buffer);
 		return (0);
 	}
 
-	fdr = read(fdo, temp, letters);
-	if (fdr < 0)
+	r = read(fd, buffer, letters);
+	if (r == -1)
 	{
-		free(temp);
+		free(buffer);
+		close(fd);
 		return (0);
 	}
 
-	fdw = write(STDOUT_FILENO, temp, fdr);
-	free(temp);
-	close(fdo);
+	w = write(STDOUT_FILENO, buffer, r);
 
-	if (fdw < 0)
+	free(buffer);
+	close(fd);
+
+	if (w == -1 || w != r)
 		return (0);
-	return ((ssize_t)fdw);
+
+	return (w);
 }
